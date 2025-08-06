@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://by1ayqj6ac8cp"]
+
+[ext_resource type="Texture2D" uid="uid://bw3okarf3o0mk" path="res://Ground037_1K-JPG/Ground037_1K-JPG_Color.jpg" id="1_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://dygkbfk7ejyr4" path="res://Player_Prototype_1.tscn" id="1_ig7tw"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7dm0k"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+albedo_texture = ExtResource("1_0xm2m")
+
+[node name="Main" type="Node3D"]
+editor_description = "Primary Scene for world building
+"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.82081, 0.571201, 0, -0.571201, 0.82081, 0, 3.47985, 3.13555)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, -0.186672, -0.0129545, 0.00621033)
+mesh = SubResource("PlaneMesh_7dm0k")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_h2yge")
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.686196, 0, 0)
+
+[node name="Player" parent="." instance=ExtResource("1_ig7tw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00450516, 0.306309, 0.341507)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, -0.186672, -0.0129545, 20.0153)
+mesh = SubResource("PlaneMesh_7dm0k")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_h2yge")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, -0.186672, -0.0129545, -19.9938)
+mesh = SubResource("PlaneMesh_7dm0k")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_h2yge")
