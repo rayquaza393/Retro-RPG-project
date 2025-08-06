@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ba591abbad72e774e975de82e6727a1c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Scriptable/robotGravity.asset
+  uploadId: 490030

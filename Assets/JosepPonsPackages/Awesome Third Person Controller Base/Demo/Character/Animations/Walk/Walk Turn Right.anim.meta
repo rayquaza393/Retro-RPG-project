@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 018d62d827d36224da25eca9f55df308
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Animations/Walk/Walk
+    Turn Right.anim
+  uploadId: 490030

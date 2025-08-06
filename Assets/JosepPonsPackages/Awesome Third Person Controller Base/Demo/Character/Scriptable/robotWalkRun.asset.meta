@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c31c077230fd0cc4e96471f2d9320251
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Scriptable/robotWalkRun.asset
+  uploadId: 490030

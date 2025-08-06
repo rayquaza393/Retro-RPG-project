@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: efed8a2658613aa43b5f5e369e77d114
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Scripts/Editor/CharacterManager_Editor.cs
+  uploadId: 490030

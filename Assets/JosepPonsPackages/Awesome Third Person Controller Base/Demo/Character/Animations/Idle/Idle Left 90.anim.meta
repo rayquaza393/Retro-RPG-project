@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3d863262f6030124ea7253e5f578acb8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Animations/Idle/Idle
+    Left 90.anim
+  uploadId: 490030

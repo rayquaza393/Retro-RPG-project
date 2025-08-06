@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 829cea1b81fb9924f865120c715f2d9b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Animations/Fall/Fall
+    Edge.anim
+  uploadId: 490030

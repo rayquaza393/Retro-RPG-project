@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f791eda4a15c63e4396e658c16e6920d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Materials/Skin
+    robot.mat
+  uploadId: 490030

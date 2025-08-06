@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f7fb114d06fdcb142980953f775bc7df
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Animations/Jump/Idle
+    Jump.anim
+  uploadId: 490030

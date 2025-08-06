@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7166b717343468e4eace3ce6ffcbc808
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Animations/Run/Run
+    Turn 180.anim
+  uploadId: 490030

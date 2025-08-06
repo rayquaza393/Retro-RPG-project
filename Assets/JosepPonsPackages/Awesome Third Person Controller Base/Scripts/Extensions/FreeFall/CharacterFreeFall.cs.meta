@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 39aa2d5131a7643429ca317d9b65083d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - configScriptable: {fileID: 11400000, guid: 04f107a78862a3a40ab67f2ed416d68b, type: 2}
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: e8b73eb9739d320408b0fed7f8c4fb92, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Scripts/Extensions/FreeFall/CharacterFreeFall.cs
+  uploadId: 490030

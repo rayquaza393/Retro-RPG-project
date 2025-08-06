@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 77f1d6ea5427db04d925fe3ddcb2be57
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: bc9aa2001ac401b43890fcce24ed28c6, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Scripts/Extensions/Gravity/CharacterScriptableGravity.cs
+  uploadId: 490030

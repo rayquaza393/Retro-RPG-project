@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e3c261afbfd63de4cb0559b8d6f077a2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 215730
+  packageName: Awesome Third Person Controller
+  packageVersion: 1.00.01
+  assetPath: Assets/Josep Pons Packages/Awesome Third Person Controller Base/Demo/Character/Materials/Robot
+    iris.mat
+  uploadId: 490030
