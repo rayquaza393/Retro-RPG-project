@@ -32,13 +32,15 @@ public class PlayerSpawner : NetworkBehaviour
         NetworkManager.OnClientDisconnectCallback += HandleClientDisconnected;
     }
 
-    void OnDestroy()
+    protected new void OnDestroy()
     {
+        base.OnDestroy(); // safe to call
         if (NetworkManager == null) return;
         NetworkManager.OnServerStarted -= HandleServerStarted;
         NetworkManager.OnClientConnectedCallback -= HandleClientConnected;
         NetworkManager.OnClientDisconnectCallback -= HandleClientDisconnected;
     }
+
 
     void HandleServerStarted()
     {

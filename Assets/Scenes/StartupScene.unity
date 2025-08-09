@@ -384,15 +384,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fcdf56e1ccac2043866c95047b26da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 0}
+  networkManager: {fileID: 1646945460}
   addressTMP: {fileID: 0}
   portTMP: {fileID: 0}
   addressInput: {fileID: 0}
   portInput: {fileID: 0}
   playerNameTMP: {fileID: 0}
-  gameplayScene: Game
-  autoLoadOnHost: 1
-  autoLoadOnServer: 1
+  gameplayScene: GameScene
 --- !u!4 &1221816048
 Transform:
   m_ObjectHideFlags: 0
@@ -740,7 +738,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1646945459}
-    PlayerPrefab: {fileID: 8047161636021232021, guid: c708a3b79cd542b42bbfedb17e213bc1, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 16bd23ff5869017499b679ebd94d0149, type: 2}
