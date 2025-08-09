@@ -1,0 +1,18 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Treat Unity YAML files as text
+*.unity text
+*.prefab text
+*.mat text
+*.asset text
+*.controller text
+*.anim text
+
+# Ignore binary diffs for these file types
+*.png binary
+*.jpg binary
+*.fbx binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
