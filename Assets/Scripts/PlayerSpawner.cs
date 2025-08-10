@@ -1,101 +1,127 @@
-// PlayerSpawner.cs (Unity 2022+ safe)
-// Server-authoritative player spawn for NGO
-
+﻿// Assets/Scripts/PlayerSpawner.cs
+using System.Linq;
 using UnityEngine;
 using Unity.Netcode;
-using System.Linq;
 
+[RequireComponent(typeof(NetworkObject))]
+[DefaultExecutionOrder(-5000)]
 public class PlayerSpawner : NetworkBehaviour
 {
-    [Header("Assign a prefab with NetworkObject on it")]
-    public GameObject playerPrefab;
+    [Header("Assign a prefab with NetworkObject")]
+    [SerializeField] private GameObject playerPrefab;
 
-    Transform[] spawnPoints;
+    [Header("Spawn Points (use PlayerSpawnPoint component)")]
+    [SerializeField] private bool includeInactiveSpawnPoints = true;
 
-    void Awake()
+    [Header("Fallback")]
+    [SerializeField] private Vector3 fallbackPosition = new Vector3(0f, 1.5f, 0f);
+    [SerializeField] private Vector3 fallbackEuler = Vector3.zero;
+
+    [Header("Logs")]
+    [SerializeField] private bool verboseLogs = true;
+
+    private Transform[] _spawnPoints;
+
+    private void Awake()
     {
-        // New API: FindObjectsByType instead of deprecated FindObjectsOfType(bool)
-        spawnPoints = Object.FindObjectsByType<PlayerSpawnPoint>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None
-            )
-            .Select(p => p.transform)
-            .ToArray();
+        var found = Object.FindObjectsByType<PlayerSpawnPoint>(
+            includeInactiveSpawnPoints ? FindObjectsInactive.Include : FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None
+        );
+        _spawnPoints = found.Select(p => p.transform).ToArray();
+        if (verboseLogs) Debug.Log($"[PlayerSpawner] Found spawn points: {_spawnPoints.Length}");
     }
 
     public override void OnNetworkSpawn()
     {
         if (!IsServer) return;
 
-        NetworkManager.OnServerStarted += HandleServerStarted;
-        NetworkManager.OnClientConnectedCallback += HandleClientConnected;
-        NetworkManager.OnClientDisconnectCallback += HandleClientDisconnected;
-    }
-
-    protected new void OnDestroy()
-    {
-        base.OnDestroy(); // safe to call
-        if (NetworkManager == null) return;
-        NetworkManager.OnServerStarted -= HandleServerStarted;
-        NetworkManager.OnClientConnectedCallback -= HandleClientConnected;
-        NetworkManager.OnClientDisconnectCallback -= HandleClientDisconnected;
-    }
-
-
-    void HandleServerStarted()
-    {
-        // Host player spawns here
-        TrySpawnPlayer(NetworkManager.LocalClientId);
-    }
-
-    void HandleClientConnected(ulong clientId)
-    {
-        // Remote clients / dedicated server clients
-        TrySpawnPlayer(clientId);
-    }
-
-    void HandleClientDisconnected(ulong clientId)
-    {
-        if (NetworkManager.ConnectedClients.TryGetValue(clientId, out var conn) && conn.PlayerObject != null)
+        var nm = NetworkManager.Singleton;
+        if (!nm)
         {
-            conn.PlayerObject.Despawn(true);
+            Debug.LogError("[PlayerSpawner] No NetworkManager.Singleton.");
+            return;
         }
-    }
-
-    void TrySpawnPlayer(ulong clientId)
-    {
-        if (playerPrefab == null)
+        if (!playerPrefab)
         {
             Debug.LogError("[PlayerSpawner] Player prefab not assigned.");
             return;
         }
-
-        // Avoid double-spawn if it already exists
-        if (NetworkManager.ConnectedClients.TryGetValue(clientId, out var conn) && conn.PlayerObject != null)
-            return;
-
-        var (pos, rot) = GetSpawnPose(clientId);
-
-        var playerGO = Instantiate(playerPrefab, pos, rot);
-        var netObj = playerGO.GetComponent<NetworkObject>();
-        if (netObj == null)
+        if (!playerPrefab.GetComponent<NetworkObject>())
         {
-            Debug.LogError("[PlayerSpawner] Player prefab missing NetworkObject!");
-            Destroy(playerGO);
+            Debug.LogError("[PlayerSpawner] Player prefab missing NetworkObject.");
+            return;
+        }
+        // FIXED: check entries safely
+        bool registered = nm.NetworkConfig.Prefabs != null &&
+                          nm.NetworkConfig.Prefabs.Prefabs != null &&
+                          nm.NetworkConfig.Prefabs.Prefabs.Any(e => e != null && e.Prefab == playerPrefab);
+        if (!registered)
+        {
+            Debug.LogError("[PlayerSpawner] Player prefab NOT in NetworkManager → NetworkPrefabs.");
             return;
         }
 
-        netObj.SpawnAsPlayerObject(clientId, true);
+        nm.OnClientConnectedCallback += HandleClientConnected;
+        nm.OnClientDisconnectCallback += HandleClientDisconnected;
+
+        // Spawn for clients already connected (host included)
+        foreach (var c in nm.ConnectedClientsList)
+            TrySpawnPlayer(c.ClientId);
+
+        if (verboseLogs) Debug.Log("[PlayerSpawner] OnNetworkSpawn complete.");
     }
 
-    (Vector3, Quaternion) GetSpawnPose(ulong clientId)
+    public override void OnNetworkDespawn()
     {
-        if (spawnPoints != null && spawnPoints.Length > 0)
+        if (!IsServer) return;
+        var nm = NetworkManager.Singleton;
+        if (nm != null)
         {
-            // simple round-robin by clientId
-            var t = spawnPoints[(int)(clientId % (ulong)spawnPoints.Length)];
+            nm.OnClientConnectedCallback -= HandleClientConnected;
+            nm.OnClientDisconnectCallback -= HandleClientDisconnected;
+        }
+    }
+
+    private void HandleClientConnected(ulong clientId) => TrySpawnPlayer(clientId);
+
+    private void HandleClientDisconnected(ulong clientId)
+    {
+        var nm = NetworkManager.Singleton;
+        if (nm != null &&
+            nm.ConnectedClients.TryGetValue(clientId, out var conn) &&
+            conn.PlayerObject != null)
+        {
+            if (verboseLogs) Debug.Log($"[PlayerSpawner] Despawning player for {clientId}");
+            conn.PlayerObject.Despawn(true);
+        }
+    }
+
+    private void TrySpawnPlayer(ulong clientId)
+    {
+        var nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        if (nm.ConnectedClients.TryGetValue(clientId, out var conn) && conn.PlayerObject != null)
+        {
+            if (verboseLogs) Debug.Log($"[PlayerSpawner] Client {clientId} already has PlayerObject.");
+            return;
+        }
+
+        var (pos, rot) = GetSpawnPose(clientId);
+        var go = Instantiate(playerPrefab, pos, rot);
+        var netObj = go.GetComponent<NetworkObject>();
+        if (verboseLogs) Debug.Log($"[PlayerSpawner] Spawning player {clientId} at {pos}");
+        netObj.SpawnAsPlayerObject(clientId, destroyWithScene: true);
+    }
+
+    private (Vector3, Quaternion) GetSpawnPose(ulong clientId)
+    {
+        if (_spawnPoints != null && _spawnPoints.Length > 0)
+        {
+            var t = _spawnPoints[(int)(clientId % (ulong)_spawnPoints.Length)];
             return (t.position, t.rotation);
         }
-        return (Vector3.up * 1.5f, Quaternion.identity);
+        return (fallbackPosition, Quaternion.Euler(fallbackEuler));
     }
 }

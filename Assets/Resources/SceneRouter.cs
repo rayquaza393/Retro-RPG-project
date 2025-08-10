@@ -1,10 +1,10 @@
 ﻿// Assets/Scripts/Bootloader.cs
-// Drop-in Bootstrap for Unity Netcode for GameObjects
-// - Ensures a single persistent NetworkManager
-// - Optional auto-start as Host/Client/Server
-// - Loads target scenes additively (via NGO SceneManager when hosting)
-// Tested with Unity Netcode for GameObjects (com.unity.netcode.gameobjects)
-// and Unity Transport (com.unity.transport)
+// Robust Bootloader for Unity Netcode (Unity 6.x)
+// - Keeps single NetworkManager alive
+// - Starts Host/Client/Server
+// - Loads target scenes additively
+// - Sets FIRST non-startup loaded scene active
+// - Unloads Startup after handoff (no name matching)
 
 using System.Collections;
 using System.Collections.Generic;
@@ -23,72 +23,64 @@ namespace RetroRPG.Boot
         private static Bootloader _instance;
 
         [Header("Networking")]
-        [Tooltip("If not assigned, the Bootloader will FindOrAdd a NetworkManager on this GameObject.")]
         [SerializeField] private NetworkManager networkManager;
-
-        [Tooltip("Auto-create UnityTransport if missing on the NetworkManager.")]
         [SerializeField] private bool ensureUnityTransport = true;
-
-        [Tooltip("Transport address (used by UnityTransport).")]
         [SerializeField] private string address = "127.0.0.1";
-
-        [Tooltip("Transport port (used by UnityTransport).")]
         [SerializeField] private ushort port = 7777;
 
         [Header("Startup")]
-        [Tooltip("Optional: automatically start networking on play.")]
         [SerializeField] private StartMode autoStartMode = StartMode.None;
-
-        [Tooltip("Optional delay before auto-start (seconds).")]
         [SerializeField] private float autoStartDelay = 0.1f;
-
-        [Tooltip("Scenes to load after networking starts. For Host/Server these are loaded via NetworkSceneManager; for Client, the server will sync scenes.")]
-        [SerializeField] private List<string> scenesToLoad = new List<string> { "GameScene" };
-
-        [Tooltip("Unload the Startup scene after target scenes are loaded.")]
+        [Tooltip("Scenes to load (additive) after networking starts (host/server). Clients sync from host.")]
+        [SerializeField] private List<string> scenesToLoad = new() { "GameScene" };
         [SerializeField] private bool unloadStartupScene = true;
+        [SerializeField] private bool makeLoadedSceneActive = true;
 
         [Header("Diagnostics")]
         [SerializeField] private bool verboseLogs = true;
 
         private bool _initialized;
+        private bool _startupUnloaded;
+        private bool _activeSet;
+        private Scene _startupScene;
 
         private void Awake()
         {
-            // Singleton Bootloader
+            // Singleton
             if (_instance != null && _instance != this)
             {
-                if (verboseLogs) Debug.Log("[Bootloader] Duplicate instance found, destroying this one.");
+                if (verboseLogs) Debug.Log("[Bootloader] Duplicate instance; destroying this one.");
                 Destroy(gameObject);
                 return;
             }
             _instance = this;
 
-            DontDestroyOnLoad(gameObject);
+            _startupScene = gameObject.scene;      // remember Startup scene
+            DontDestroyOnLoad(gameObject);         // move to DontDestroyOnLoad
 
-            // Ensure/Configure NetworkManager
             EnsureNetworkManager();
             ConfigureTransport();
 
-            // Keep NetworkManager alive across scenes
+            // Keep NM alive
             DontDestroyOnLoad(networkManager.gameObject);
 
-            // Subscribe to NGO scene events for logging
+            // Hooks
             if (networkManager != null && networkManager.SceneManager != null)
             {
-                networkManager.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+                networkManager.SceneManager.OnLoadEventCompleted += OnNetworkedLoadCompleted;
             }
+            SceneManager.sceneLoaded += OnLocalSceneLoaded;
 
             _initialized = true;
+
+            if (verboseLogs)
+                Debug.Log($"[Bootloader] Awake in scene '{_startupScene.name}'.");
         }
 
         private void Start()
         {
             if (autoStartMode != StartMode.None)
-            {
-                // Small delay to allow editor/playmode initialization
                 Invoke(nameof(DoAutoStart), autoStartDelay);
-            }
         }
 
         private void OnDestroy()
@@ -96,74 +88,59 @@ namespace RetroRPG.Boot
             if (_instance == this) _instance = null;
 
             if (networkManager != null && networkManager.SceneManager != null)
-            {
-                networkManager.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
-            }
+                networkManager.SceneManager.OnLoadEventCompleted -= OnNetworkedLoadCompleted;
+
+            SceneManager.sceneLoaded -= OnLocalSceneLoaded;
         }
 
-        // -------- PUBLIC BUTTON HOOKS (wire these to your UI) --------
-
+        // UI hooks
         public void StartAsHost()
         {
             EnsureInitialized();
-            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsListening)
-            {
-                if (verboseLogs) Debug.Log("[Bootloader] Starting as Host…");
-                if (NetworkManager.Singleton.StartHost())
-                {
-                    LoadTargetScenesAsHostOrServer();
-                }
-                else
-                {
-                    Debug.LogError("[Bootloader] StartHost failed.");
-                }
-            }
+            if (!NetworkManager.Singleton || NetworkManager.Singleton.IsListening) return;
+
+            if (verboseLogs) Debug.Log("[Bootloader] Start as Host");
+            if (NetworkManager.Singleton.StartHost())
+                LoadTargetScenesAsHostOrServer();
+            else
+                Debug.LogError("[Bootloader] StartHost failed.");
         }
 
         public void StartAsClient()
         {
             EnsureInitialized();
             var nm = NetworkManager.Singleton;
-            if (nm != null && !nm.IsListening)
-            {
-                if (verboseLogs) Debug.Log($"[Bootloader] Starting as Client… ({address}:{port})");
-                if (!nm.StartClient())
-                {
-                    Debug.LogError("[Bootloader] StartClient failed.");
-                }
-            }
+            if (!nm || nm.IsListening) return;
+
+            if (verboseLogs) Debug.Log($"[Bootloader] Start as Client ({address}:{port})");
+            if (!nm.StartClient())
+                Debug.LogError("[Bootloader] StartClient failed.");
         }
 
         public void StartAsServer()
         {
             EnsureInitialized();
             var nm = NetworkManager.Singleton;
-            if (nm != null && !nm.IsListening)
-            {
-                if (verboseLogs) Debug.Log("[Bootloader] Starting as Server…");
-                if (nm.StartServer())
-                {
-                    LoadTargetScenesAsHostOrServer();
-                }
-                else
-                {
-                    Debug.LogError("[Bootloader] StartServer failed.");
-                }
-            }
+            if (!nm || nm.IsListening) return;
+
+            if (verboseLogs) Debug.Log("[Bootloader] Start as Server");
+            if (nm.StartServer())
+                LoadTargetScenesAsHostOrServer();
+            else
+                Debug.LogError("[Bootloader] StartServer failed.");
         }
 
         public void Shutdown()
         {
             var nm = NetworkManager.Singleton;
-            if (nm != null && nm.IsListening)
+            if (nm && nm.IsListening)
             {
-                if (verboseLogs) Debug.Log("[Bootloader] Shutting down network…");
+                if (verboseLogs) Debug.Log("[Bootloader] Shutdown");
                 nm.Shutdown();
             }
         }
 
-        // ----------------- INTERNALS -----------------
-
+        // Internals
         private void DoAutoStart()
         {
             switch (autoStartMode)
@@ -171,7 +148,6 @@ namespace RetroRPG.Boot
                 case StartMode.Host: StartAsHost(); break;
                 case StartMode.Client: StartAsClient(); break;
                 case StartMode.Server: StartAsServer(); break;
-                case StartMode.None: /* noop */         break;
             }
         }
 
@@ -182,115 +158,105 @@ namespace RetroRPG.Boot
 
         private void EnsureNetworkManager()
         {
-            // If user assigned one in Inspector, prefer it
-            if (networkManager == null)
+            if (!networkManager)
             {
                 networkManager = GetComponent<NetworkManager>();
-                if (networkManager == null)
+                if (!networkManager)
                 {
-                    // Create one on this GameObject
                     networkManager = gameObject.AddComponent<NetworkManager>();
-                    if (verboseLogs) Debug.Log("[Bootloader] No NetworkManager found; added one to Bootloader GameObject.");
+                    if (verboseLogs) Debug.Log("[Bootloader] Added NetworkManager to Bootloader GO.");
                 }
-            }
-
-            // Make sure the static Singleton points to ours
-            if (NetworkManager.Singleton != networkManager)
-            {
-                // This will be set when the component enables; just sanity log
-                if (verboseLogs) Debug.Log("[Bootloader] NetworkManager instance prepared.");
             }
         }
 
         private void ConfigureTransport()
         {
-            if (!ensureUnityTransport || networkManager == null) return;
+            if (!ensureUnityTransport || !networkManager) return;
 
             var ut = networkManager.NetworkConfig.NetworkTransport as UnityTransport;
-            if (ut == null)
+            if (!ut)
             {
-                ut = networkManager.gameObject.GetComponent<UnityTransport>();
-                if (ut == null) ut = networkManager.gameObject.AddComponent<UnityTransport>();
+                ut = networkManager.gameObject.GetComponent<UnityTransport>() ?? networkManager.gameObject.AddComponent<UnityTransport>();
                 networkManager.NetworkConfig.NetworkTransport = ut;
-
-                if (verboseLogs) Debug.Log("[Bootloader] UnityTransport added and bound to NetworkManager.");
+                if (verboseLogs) Debug.Log("[Bootloader] UnityTransport attached and bound.");
             }
-
-            // Configure address/port
             ut.SetConnectionData(address, port);
         }
 
         private void LoadTargetScenesAsHostOrServer()
         {
             var nm = NetworkManager.Singleton;
-            if (nm == null) return;
+            if (!nm) return;
 
             if (nm.SceneManager == null)
             {
-                Debug.LogWarning("[Bootloader] NetworkSceneManager is null; loading scenes locally (non-networked).");
-                LoadScenesLocally();
+                if (verboseLogs) Debug.LogWarning("[Bootloader] NetworkSceneManager null; loading locally.");
+                foreach (var s in scenesToLoad)
+                    if (!string.IsNullOrWhiteSpace(s))
+                        SceneManager.LoadScene(s, LoadSceneMode.Additive);
                 return;
             }
 
-            // Host/Server authoritative scene loading
-            foreach (var sceneName in scenesToLoad)
+            foreach (var s in scenesToLoad)
             {
-                if (string.IsNullOrWhiteSpace(sceneName)) continue;
-                if (verboseLogs) Debug.Log($"[Bootloader] (Networked) Loading scene: {sceneName} (Additive)");
-                nm.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-            }
-
-            if (unloadStartupScene)
-            {
-                // Defer unloading until at least one load completes to avoid bouncing
-                TryUnloadStartupSceneDeferred();
+                if (string.IsNullOrWhiteSpace(s)) continue;
+                if (verboseLogs) Debug.Log($"[Bootloader] Networked load: {s} (Additive)");
+                nm.SceneManager.LoadScene(s, LoadSceneMode.Additive);
             }
         }
 
-        private void TryUnloadStartupSceneDeferred()
+        // Handoffs
+        private void OnNetworkedLoadCompleted(string sceneName, LoadSceneMode mode, List<ulong> ok, List<ulong> timeouts)
         {
-            StartCoroutine(UnloadAfterFrame());
+            if (verboseLogs)
+                Debug.Log($"[Bootloader] NGO load complete → {sceneName} | clients OK: {ok.Count} | timeouts: {timeouts.Count}");
+
+            var scene = SceneManager.GetSceneByName(sceneName);
+            if (scene.IsValid())
+                StartCoroutine(MakeActiveThenUnloadStartup_Co(scene));
         }
 
-        private IEnumerator UnloadAfterFrame()
+        private void OnLocalSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // wait 1 frame
-            yield return null;
+            if (verboseLogs)
+                Debug.Log($"[Bootloader] Local load → {scene.name} | mode: {mode}");
 
-            var active = SceneManager.GetActiveScene();
-            var thisScene = gameObject.scene;
-            if (unloadStartupScene && thisScene.IsValid() && thisScene.isLoaded && thisScene != active)
-            {
-                if (verboseLogs) Debug.Log($"[Bootloader] Unloading startup scene: {thisScene.name}");
-                SceneManager.UnloadSceneAsync(thisScene);
-            }
+            StartCoroutine(MakeActiveThenUnloadStartup_Co(scene));
         }
 
-        private void LoadScenesLocally()
+        private IEnumerator MakeActiveThenUnloadStartup_Co(Scene loaded)
         {
-            foreach (var sceneName in scenesToLoad)
+            // Ignore our own startup scene
+            if (loaded == _startupScene) yield break;
+
+            // Wait until fully loaded (paranoia)
+            while (!loaded.IsValid() || !loaded.isLoaded)
+                yield return null;
+
+            // Set active once, to the first non-startup scene
+            if (makeLoadedSceneActive && !_activeSet)
             {
-                if (string.IsNullOrWhiteSpace(sceneName)) continue;
-                if (verboseLogs) Debug.Log($"[Bootloader] (Local) Loading scene: {sceneName} (Additive)");
-                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                if (verboseLogs) Debug.Log($"[Bootloader] Setting active scene → {loaded.name}");
+                SceneManager.SetActiveScene(loaded);
+                _activeSet = true;
             }
 
-            if (unloadStartupScene)
+            // Unload Startup after handoff
+            if (unloadStartupScene && !_startupUnloaded)
             {
-                var thisScene = gameObject.scene;
-                if (thisScene.IsValid() && thisScene.isLoaded)
+                if (_startupScene.IsValid() && _startupScene.isLoaded && _startupScene != loaded)
                 {
-                    if (verboseLogs) Debug.Log($"[Bootloader] Unloading startup scene: {thisScene.name}");
-                    SceneManager.UnloadSceneAsync(thisScene);
+                    if (verboseLogs) Debug.Log($"[Bootloader] Unloading startup scene: {_startupScene.name}");
+                    _startupUnloaded = true;
+                    SceneManager.UnloadSceneAsync(_startupScene);
                 }
             }
-        }
 
-        private void OnLoadEventCompleted(string sceneName, LoadSceneMode mode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
-        {
-            if (!verboseLogs) return;
-
-            Debug.Log($"[Bootloader] Networked scene load completed: {sceneName} | Mode: {mode} | Clients OK: {clientsCompleted.Count} | Timeouts: {clientsTimedOut.Count}");
+            if (verboseLogs)
+            {
+                var active = SceneManager.GetActiveScene();
+                Debug.Log($"[Bootloader] Active: {active.name} | Startup unloaded: {_startupUnloaded}");
+            }
         }
     }
 }

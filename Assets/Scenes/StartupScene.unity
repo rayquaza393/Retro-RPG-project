@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 271009412}
   - component: {fileID: 271009411}
   - component: {fileID: 271009410}
+  - component: {fileID: 271009414}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -222,6 +223,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &271009414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271009409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b6d0e97a5c59d4d8337cd9500bd53f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toHide:
+  - {fileID: 271009409}
 --- !u!1 &759385517
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,8 +321,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1221816047}
-        m_TargetAssemblyTypeName: Bootloader, Assembly-CSharp
-        m_MethodName: StartClient
+        m_TargetAssemblyTypeName: RetroRPG.Boot.Bootloader, Assembly-CSharp
+        m_MethodName: StartAsClient
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -385,12 +400,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 1646945460}
-  addressTMP: {fileID: 0}
-  portTMP: {fileID: 0}
-  addressInput: {fileID: 0}
-  portInput: {fileID: 0}
-  playerNameTMP: {fileID: 0}
-  gameplayScene: GameScene
+  ensureUnityTransport: 1
+  address: 127.0.0.1
+  port: 7777
+  autoStartMode: 0
+  autoStartDelay: 0.1
+  scenesToLoad:
+  - GameScene
+  unloadStartupScene: 1
+  makeLoadedSceneActive: 1
+  verboseLogs: 1
 --- !u!4 &1221816048
 Transform:
   m_ObjectHideFlags: 0
@@ -626,8 +645,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1221816047}
-        m_TargetAssemblyTypeName: Bootloader, Assembly-CSharp
-        m_MethodName: StartHost
+        m_TargetAssemblyTypeName: RetroRPG.Boot.Bootloader, Assembly-CSharp
+        m_MethodName: StartAsHost
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

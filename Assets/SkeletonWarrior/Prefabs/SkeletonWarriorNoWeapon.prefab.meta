@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8c78a47f60bcba3449258f2f1232e9a5
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 222338
+  packageName: Skeleton Warrior 1
+  packageVersion: 1.0
+  assetPath: Assets/SkeletonWarrior/Prefabs/SkeletonWarriorNoWeapon.prefab
+  uploadId: 501640
