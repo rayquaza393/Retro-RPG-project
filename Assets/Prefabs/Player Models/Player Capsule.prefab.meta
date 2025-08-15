@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7966a48a9482d4c658be467c4bf08da6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Prefabs/Player Models/Player Capsule.prefab
+  uploadId: 763371

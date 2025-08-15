@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 94387ac3fe852d549966d245def277be
+timeCreated: 1504768172
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Environment/FBX/Materials/Brown.9.mat
+  uploadId: 763371

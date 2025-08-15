@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c356d07ea28e14000a234864a77ef1fa
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Prefabs/Player Models/Player Cube.prefab
+  uploadId: 763371

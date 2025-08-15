@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 01e471150030d4d219fd80b7eeeea05f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Scripts/Controllers/BaseSceneController.cs
+  uploadId: 763371

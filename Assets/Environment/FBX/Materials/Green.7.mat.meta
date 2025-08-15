@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0f7806b54edf71c4796d1c67899856bc
+timeCreated: 1504768179
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Environment/FBX/Materials/Green.7.mat
+  uploadId: 763371

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5c1409ba6660a4fe1b64b2202ed8f1f8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Scripts/Managers/GlobalManager.cs
+  uploadId: 763371

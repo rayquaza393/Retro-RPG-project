@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 25e9427e97857471cbd608d9c5e03978
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Environment/Polybrush Data/Prefab Palette/PrefabPalette-Default.asset
+  uploadId: 763371

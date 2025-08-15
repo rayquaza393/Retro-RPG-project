@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3cc8bbb13aaccaf45a7351cc3cb3e3aa
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Render Settings/UniversalRenderPipelineGlobalSettings.asset
+  uploadId: 763371

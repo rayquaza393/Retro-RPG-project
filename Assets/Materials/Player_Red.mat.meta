@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cd293263caff2453bbace47c4d5d788d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Materials/Player_Red.mat
+  uploadId: 763371

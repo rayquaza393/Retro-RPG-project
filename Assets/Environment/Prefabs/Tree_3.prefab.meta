@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: fa6105287f77b1240a0017f7d23434c2
+timeCreated: 1504785589
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Environment/Prefabs/Tree_3.prefab
+  uploadId: 763371

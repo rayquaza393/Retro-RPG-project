@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8fcf21dffbcc748228fa118b7b5665d0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Materials/Player_Blue.mat
+  uploadId: 763371

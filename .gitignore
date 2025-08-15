@@ -1,11 +1,15 @@
+# Unity caches 
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
-[Bb]uild/
+[Bb]uild*/
 [Ll]ogs/
 UserSettings/
+
+# IDE/OS
 .vs/
 .vscode/
+.DS_Store
 *.csproj
 *.sln
 *.user
@@ -13,4 +17,22 @@ UserSettings/
 *.pdb
 *.apk
 *.aab
-.DS_Store
+
+
+Assets/Imports/
+
+# Optional big transient files (skip if you DO want them in Git)
+*.zip
+*.rar
+*.7z
+
+
+/DevBuild-*/
+/Build/
+/Builds/
+*_Data/
+*.resS
+*.apk
+*.aab
+*.exe
+

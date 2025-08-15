@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1c8f4da59af974aa4a2b23e9fe40956f
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Prefabs/Player Models/Player Sphere.prefab
+  uploadId: 763371

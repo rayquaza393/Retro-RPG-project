@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 41e722f5443cbd048b675375e24f1beb
+timeCreated: 1504785540
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Environment/Prefabs/Plant_4.prefab
+  uploadId: 763371

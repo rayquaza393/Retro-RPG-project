@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3befd127351924efcb0db3cddbb80ff3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253049
+  packageName: SmartFoxServer 2X | MMO Basics
+  packageVersion: 1.1
+  assetPath: Assets/Environment/Polybrush Data/Brush Settings/BrushSettings-Default.asset
+  uploadId: 763371
