@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // For TextMeshPro
+using TMPro;
 using Sfs2X;
 using Sfs2X.Core;
 using Sfs2X.Entities;
@@ -13,10 +13,10 @@ namespace SmartFoxServer.Unity.Examples
         [Header("Prefabs")]
         public GameObject localPlayerPrefab;
         public GameObject remotePlayerPrefab;
-        public GameObject nameTagPrefab; // <-- Slot in Inspector
+        public GameObject nameTagPrefab;
 
         [Header("Nametag Settings")]
-        public float nameTagHeight = 2.0f;
+        public float nameTagHeight = 1.0f;
         public int nameTagFontSize = 14;
 
         [Header("Spawn Points")]
@@ -39,9 +39,19 @@ namespace SmartFoxServer.Unity.Examples
             sfs.AddEventListener(SFSEvent.USER_ENTER_ROOM, OnUserEnterRoom);
             sfs.AddEventListener(SFSEvent.USER_EXIT_ROOM, OnUserExitRoom);
             sfs.AddEventListener(SFSEvent.ROOM_JOIN, OnRoomJoin);
+            sfs.AddEventListener(SFSEvent.USER_VARIABLES_UPDATE, OnUserVarsUpdate);
 
             if (sfs.LastJoinedRoom != null)
                 SpawnExistingUsers();
+        }
+
+        private void OnDestroy()
+        {
+            if (sfs == null) return;
+            sfs.RemoveEventListener(SFSEvent.USER_ENTER_ROOM, OnUserEnterRoom);
+            sfs.RemoveEventListener(SFSEvent.USER_EXIT_ROOM, OnUserExitRoom);
+            sfs.RemoveEventListener(SFSEvent.ROOM_JOIN, OnRoomJoin);
+            sfs.RemoveEventListener(SFSEvent.USER_VARIABLES_UPDATE, OnUserVarsUpdate);
         }
 
         private void OnRoomJoin(BaseEvent evt)
@@ -51,19 +61,43 @@ namespace SmartFoxServer.Unity.Examples
 
         private void OnUserEnterRoom(BaseEvent evt)
         {
-            User user = (User)evt.Params["user"];
+            var user = (User)evt.Params["user"];
             if (user != sfs.MySelf)
                 SpawnPlayer(user, false);
         }
 
         private void OnUserExitRoom(BaseEvent evt)
         {
-            User user = (User)evt.Params["user"];
-            if (players.ContainsKey(user.Id))
+            var user = (User)evt.Params["user"];
+            if (players.TryGetValue(user.Id, out var go))
             {
-                Destroy(players[user.Id]);
+                Destroy(go);
                 players.Remove(user.Id);
             }
+        }
+
+        private void OnUserVarsUpdate(BaseEvent evt)
+        {
+            var user = (User)evt.Params["user"];
+            if (user == sfs.MySelf) return;
+
+            if (!players.TryGetValue(user.Id, out var go)) return;
+
+            var vx = user.GetVariable("px");
+            var vy = user.GetVariable("py");
+            var vz = user.GetVariable("pz");
+            var vyaw = user.GetVariable("ry");
+            if (vx == null || vy == null || vz == null || vyaw == null) return;
+
+            var pos = new Vector3(
+                (float)vx.GetDoubleValue(),
+                (float)vy.GetDoubleValue(),
+                (float)vz.GetDoubleValue()
+            );
+            float yaw = (float)vyaw.GetDoubleValue();
+
+            var ra = go.GetComponent<RemoteAvatar>();
+            if (ra != null) ra.ApplySnapshot(pos, yaw);
         }
 
         private void SpawnExistingUsers()
@@ -75,9 +109,10 @@ namespace SmartFoxServer.Unity.Examples
             }
         }
 
+        // Make sure this method is at CLASS scope (not nested inside another method)
         private void SpawnPlayer(User user, bool isLocal)
         {
-            if (spawnPoints.Length == 0)
+            if (spawnPoints == null || spawnPoints.Length == 0)
             {
                 Debug.LogError("No spawn points assigned!");
                 return;
@@ -95,22 +130,59 @@ namespace SmartFoxServer.Unity.Examples
             GameObject playerObj = Instantiate(prefab, spawn.position, spawn.rotation);
             players[user.Id] = playerObj;
 
-            // --- Nametag spawn ---
+            // Add/init sender only to LOCAL player (if not already on prefab)
+            if (isLocal)
+            {
+                var sender = playerObj.GetComponent<LocalNetworkSender>();
+                if (sender == null) sender = playerObj.AddComponent<LocalNetworkSender>();
+                sender.Init(sfs); // inject client (no GlobalManager dependency inside the sender)
+            }
+            else
+            {
+                // Seed remote from any existing vars so it doesn't pop
+                var vx = user.GetVariable("px");
+                var vy = user.GetVariable("py");
+                var vz = user.GetVariable("pz");
+                var vyaw = user.GetVariable("ry");
+                if (vx != null && vy != null && vz != null && vyaw != null)
+                {
+                    var ra = playerObj.GetComponent<RemoteAvatar>();
+                    if (ra != null)
+                    {
+                        var pos = new Vector3(
+                            (float)vx.GetDoubleValue(),
+                            (float)vy.GetDoubleValue(),
+                            (float)vz.GetDoubleValue());
+                        ra.ApplySnapshot(pos, (float)vyaw.GetDoubleValue());
+                    }
+                }
+            }
+
+            // --- Nametag ---
             if (nameTagPrefab != null)
             {
-                GameObject tagObj = Instantiate(nameTagPrefab, playerObj.transform);
-                tagObj.transform.localPosition = Vector3.up * nameTagHeight;
+                var tagObj = Instantiate(nameTagPrefab);
+                var tr = tagObj.transform;
+                tr.SetParent(playerObj.transform, false);
+                tr.localPosition = Vector3.up * nameTagHeight;
+                tr.localRotation = Quaternion.identity;
+                tr.localScale = Vector3.one;
 
-                // Try to get displayName from UserVariables, fallback to username
                 string displayName = user.ContainsVariable("displayName")
                     ? user.GetVariable("displayName").GetStringValue()
                     : user.Name;
 
-                TMP_Text tmpText = tagObj.GetComponentInChildren<TMP_Text>();
-                if (tmpText != null)
+                var nt = tagObj.GetComponent<NameTag>();
+                if (nt != null)
                 {
-                    tmpText.text = displayName;
-                    tmpText.fontSize = nameTagFontSize;
+                    nt.target = playerObj.transform;
+                    nt.offset = Vector3.up * nameTagHeight;
+                    nt.SetText(displayName);
+                }
+                else
+                {
+                    var tmp = tagObj.GetComponentInChildren<TMP_Text>();
+                    if (tmp != null) { tmp.text = displayName; tmp.fontSize = nameTagFontSize; }
                 }
             }
         }

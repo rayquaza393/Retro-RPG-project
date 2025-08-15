@@ -4100,6 +4100,7 @@ GameObject:
   - component: {fileID: 7289496201403087135}
   - component: {fileID: 724817695990110057}
   - component: {fileID: 3171558715645212761}
+  - component: {fileID: -1908090831735744620}
   m_Layer: 0
   m_Name: Player_Proto
   m_TagString: Player
@@ -4173,6 +4174,18 @@ MonoBehaviour:
   animParamStrafe: Strafe
   animParamSpeed: Speed
   animParamIsGrounded: IsGrounded
+--- !u!114 &-1908090831735744620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6810170867452570467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c8c168ea5e27da4e99547c94dff1246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6936889784753165183
 GameObject:
   m_ObjectHideFlags: 0
