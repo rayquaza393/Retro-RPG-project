@@ -4098,10 +4098,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7289496201403087135}
-  - component: {fileID: 3312839226771301216}
+  - component: {fileID: 1840659864778843258}
+  - component: {fileID: 8455551425831045865}
   m_Layer: 0
   m_Name: Remote_Player_Proto
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4115,14 +4116,14 @@ Transform:
   m_GameObject: {fileID: 6810170867452570467}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 388.6387, y: 27.55905, z: 129.46544}
+  m_LocalPosition: {x: 397.94614, y: 0, z: 187.46107}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2694067733169106342}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3312839226771301216
+--- !u!114 &1840659864778843258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4131,11 +4132,47 @@ MonoBehaviour:
   m_GameObject: {fileID: 6810170867452570467}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb6a527769fab654d8111c9777e9f3c9, type: 3}
+  m_Script: {fileID: 11500000, guid: d03e656a0e041194ba60de1f66058839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posLerp: 10
-  rotLerp: 10
+  animator: {fileID: 0}
+  disableRootMotion: 1
+  groundedParam: IsGrounded
+  speedParam: Speed
+  speedSmoothing: 10
+  maxSpeedForAnim: 6
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 7
+  groundProbeHeight: 2
+  pivotToFoot: 1
+  heightOffset: 0.05
+  debugGroundRay: 0
+  posLerp: 12
+  rotLerp: 12
+--- !u!136 &8455551425831045865
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6810170867452570467}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6936889784753165183
 GameObject:
   m_ObjectHideFlags: 0
@@ -5378,7 +5415,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6827764097819629007}
   m_Layer: 0
-  m_Name: CameraFollowTarget
+  m_Name: CameraTarget
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

@@ -1,36 +1,65 @@
 using UnityEngine;
 using TMPro;
 
+[DisallowMultipleComponent]
 public class NameTag : MonoBehaviour
 {
-    public TMP_Text label;
+    [Header("Follow")]
     public Transform target;
-    public Vector3 offset = new Vector3(0, 1.0f, 0);
-    public bool yawOnly = true;
-    Camera cam;
+    public Vector3 offset = new Vector3(0f, 1f, 0f);
+
+    [Header("Billboard")]
+    public bool billboard = true;
+    public Camera cameraOverride;               // optional per-instance override
+
+    private static Camera s_BillboardCam;       // set once per local client
+    private TMP_Text _tmp;
+
+    public static void SetBillboardCamera(Camera cam)
+    {
+        s_BillboardCam = cam;
+    }
+
+    void Awake()
+    {
+        _tmp = GetComponentInChildren<TMP_Text>();
+    }
 
     void LateUpdate()
     {
-        if (!target) return;
-        if (!cam) cam = Camera.main;
+        // 1) Follow
+        if (target)
+            transform.position = target.position + offset;
 
-        transform.position = target.position + offset;
+        if (!billboard) return;
 
-        if (cam)
-        {
-            if (yawOnly)
-            {
-                var dir = cam.transform.position - transform.position;
-                dir.y = 0f;
-                if (dir.sqrMagnitude > 0.0001f)
-                    transform.rotation = Quaternion.LookRotation(-dir);
-            }
-            else
-            {
-                transform.LookAt(cam.transform, Vector3.up);
-            }
-        }
+        // 2) Pick camera
+        Camera cam = cameraOverride
+                     ? cameraOverride
+                     : (s_BillboardCam
+                        ? s_BillboardCam
+                        : (Camera.main ? Camera.main : GetAnyEnabledCamera()));
+
+        if (!cam) return;
+
+        // 3) Face camera without inheriting roll
+        Vector3 toCam = transform.position - cam.transform.position;
+        if (toCam.sqrMagnitude < 0.000001f) return;
+
+        transform.rotation = Quaternion.LookRotation(toCam, cam.transform.up);
     }
 
-    public void SetText(string s) { if (label) label.text = s; }
+    Camera GetAnyEnabledCamera()
+    {
+        foreach (var c in Camera.allCameras)
+            if (c && c.enabled && c.gameObject.activeInHierarchy)
+                return c;
+        return null;
+    }
+
+    public void SetText(string s)
+    {
+        if (!_tmp) _tmp = GetComponentInChildren<TMP_Text>();
+        if (_tmp) _tmp.text = s;
+    }
 }
