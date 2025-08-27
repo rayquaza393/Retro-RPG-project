@@ -4100,6 +4100,8 @@ GameObject:
   - component: {fileID: 7289496201403087135}
   - component: {fileID: 1840659864778843258}
   - component: {fileID: 8455551425831045865}
+  - component: {fileID: -8597200777637551217}
+  - component: {fileID: -2405684185580660133}
   m_Layer: 0
   m_Name: Remote_Player_Proto
   m_TagString: Untagged
@@ -4135,21 +4137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03e656a0e041194ba60de1f66058839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  disableRootMotion: 1
-  groundedParam: IsGrounded
-  speedParam: Speed
-  speedSmoothing: 10
-  maxSpeedForAnim: 6
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 7
-  groundProbeHeight: 2
-  pivotToFoot: 1
-  heightOffset: 0.05
-  debugGroundRay: 0
-  posLerp: 12
-  rotLerp: 12
+  interpolationRate: 10
 --- !u!136 &8455551425831045865
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4173,6 +4161,42 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &-8597200777637551217
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6810170867452570467}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 2255221d850daf642981c1a4eedf85a1, type: 3}
+  m_Controller: {fileID: 9100000, guid: ef6403663453e6a4cb106814a81e72b4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-2405684185580660133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6810170867452570467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dffab9d85b269e24c93f530639b0396e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedParam: Speed
+  smoothTime: 5
 --- !u!1 &6936889784753165183
 GameObject:
   m_ObjectHideFlags: 0

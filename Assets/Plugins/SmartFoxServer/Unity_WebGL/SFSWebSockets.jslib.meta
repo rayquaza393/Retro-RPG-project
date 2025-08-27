@@ -1,9 +1,0 @@
-fileFormatVersion: 2
-guid: 40c23e3d448164dd3bd61491bb72ff94
-AssetOrigin:
-  serializedVersion: 1
-  productId: 253049
-  packageName: SmartFoxServer 2X | MMO Basics
-  packageVersion: 1.1
-  assetPath: Assets/Plugins/SmartFoxServer/Unity_WebGL/SFSWebSockets.jslib
-  uploadId: 763371
